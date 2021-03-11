@@ -9,13 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
   
-  @State var contents: String = "Contents"
+  @State var contents: String = ""
+  @State var message: String = ""
+  var env = loadBaseFiles()!
   
   var body: some View {
     VStack {
       Spacer()
-      TextEditor(text: $contents)
-      Text(contents)
+      CodeEditor(contents: $contents)
+      Text(message)
         .padding()
       Spacer()
       Button("Run") {
@@ -26,6 +28,18 @@ struct ContentView: View {
   
   func run(contents: String) {
     print("Received: \(contents)")
+    guard let ast = Parser.parse(contents) else {
+      message = "parse error"
+      return
+    }
+    
+    for expr in ast {
+      guard let result = expr.eval(env) else {
+        message = "eval error"
+        return
+      }
+      message = String(describing: result)
+    }
   }
 }
 
