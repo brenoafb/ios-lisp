@@ -15,6 +15,8 @@ struct Results: View {
       VStack {
         Text(content)
           .lineLimit(nil)
+          .font(.system(.body, design: .monospaced))
+          .multilineTextAlignment(.leading)
       }.frame(maxWidth: .infinity)
     }
   }

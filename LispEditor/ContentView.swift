@@ -44,11 +44,16 @@ struct ContentView: View {
       let ast = try Parser.parse(contents)
       print("ast: \(ast)")
       
-      for expr in ast {
-        let result = try expr.eval(env)
-        print(result)
-        message = String(describing: result)
+      let buffer = ast.reduce("") { (buffer, expr) -> String in
+        do {
+          let result = try expr.eval(env)
+          return "\(buffer)\(String(describing: result))\n"
+        } catch let error {
+          return "\(buffer)\(error)\n"
+        }
       }
+      
+      message = buffer
     } catch let error {
       message = String(describing: error)
     }
