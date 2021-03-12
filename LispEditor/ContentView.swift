@@ -6,45 +6,57 @@
 //
 
 import SwiftUI
+import SwiftLisp
+import class SwiftLisp.Environment
 
 struct ContentView: View {
   
-  @State var contents: String = ""
-  @State var message: String = ""
-  var env = loadBaseFiles()!
+  @State var contents: String = "(+ 1 2)\n(+ 3 4)"
+  @State var message: String = "7"
+  var env: Environment
   
   var body: some View {
     VStack {
       Spacer()
+      
       CodeEditor(contents: $contents)
-      Text(message)
+      
+      Divider()
+      
+      Results(content: message)
         .padding()
+      
       Spacer()
-      Button("Run") {
-        run(contents: contents)
+      
+      HStack {
+        Button("Run") {
+          run(contents: contents)
+        }.frame(width: 300, height: 50, alignment: .trailing)
       }
+      
     }
   }
   
   func run(contents: String) {
     print("Received: \(contents)")
-    guard let ast = Parser.parse(contents) else {
-      message = "parse error"
-      return
-    }
     
-    for expr in ast {
-      guard let result = expr.eval(env) else {
-        message = "eval error"
-        return
+    do {
+      let ast = try Parser.parse(contents)
+      print("ast: \(ast)")
+      
+      for expr in ast {
+        let result = try expr.eval(env)
+        print(result)
+        message = String(describing: result)
       }
-      message = String(describing: result)
+    } catch let error {
+      message = String(describing: error)
     }
   }
 }
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView()
+    ContentView(env: try! loadBaseFiles())
   }
 }

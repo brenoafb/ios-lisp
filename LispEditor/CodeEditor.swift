@@ -17,12 +17,26 @@ struct CodeEditor: View {
       .keyboardType(.default)
       .disableAutocorrection(true)
       .autocapitalization(.none)
+      .multilineTextAlignment(.leading)
   }
 }
 
-//struct CodeEditor_Previews: PreviewProvider {
-//  @State var contents: String = "(+ 1 (+ 2 3))"
-//  static var previews: some View {
-//    CodeEditor(contents: $contents)
-//  }
-//}
+struct CodeEditor_Previews: PreviewProvider {
+  
+  static var previews: some View {
+    PreviewWrapper()
+  }
+
+  struct PreviewWrapper: View {
+    @State(initialValue: "(+ (+ 1 2)\n   (+ 2 3))\n(+ 2 3)") var code: String
+
+    var body: some View {
+      VStack {
+        Spacer(minLength: 300)
+        CodeEditor(contents: $code)
+        Spacer(minLength: 300)
+      }
+        
+    }
+  }
+}

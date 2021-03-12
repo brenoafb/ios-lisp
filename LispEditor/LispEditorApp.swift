@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftLisp
 
 @main
 struct LispEditorApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          ContentView(env: try! loadBaseFiles())
         }
     }
 }
